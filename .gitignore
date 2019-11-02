@@ -160,3 +160,4 @@ venv.bak/
 
 /src/database/sqlite.db
 /scripts/
+!/scripts/sheets_excercises.py
