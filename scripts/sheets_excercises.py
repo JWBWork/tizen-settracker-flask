@@ -14,12 +14,5 @@ exercises_df = ex_wksheet.get_as_df()
 init_db()
 db_session = get_session()
 
-for i, exercise in exercises_df.iterrows():
-	db_ex = Exercise(
-		name=exercise['Name'],
-		muscle=exercise['Muscle'],
-		group=exercise['Group']
-	)
-	db_session.add(db_ex)
-db_session.commit()
-
+if __name__ == '__main__':
+    pass
