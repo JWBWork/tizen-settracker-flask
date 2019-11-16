@@ -38,16 +38,25 @@ def init_db():
 
 
 def destroy_tables():
-	from src.database.models.models import Muscle, Split, Exercise
-	from src.database.models.models import ExerciseTimeSeries, SplitTimeSeries
-	SplitTimeSeries.__table__.drop(bind=engine)
-	ExerciseTimeSeries.__table__.drop(bind=engine)
-	Muscle.__table__.drop(bind=engine)
-	Exercise.__table__.drop(bind=engine)
-	Split.__table__.drop(bind=engine)
-	Base.metadata.drop_all(bind=engine)
+	Base.metadata.drop_all(
+		bind=engine
+	)
+
+
+def get_class_by_tablename(tablename):
+	"""Return class reference mapped to table.
+
+	:param tablename: String with name of table.
+	:return: Class reference or None.
+	"""
+	print(list(Base._decl_class_registry.values()))
+	for c in Base._decl_class_registry.values():
+		if hasattr(c, '__tablename__') and c.__tablename__ == tablename:
+			return c
 
 
 if __name__ == '__main__':
 	init_db()
+	destroy_tables()
+	print(engine.table_names())
 
