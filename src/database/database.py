@@ -57,6 +57,6 @@ def get_class_by_tablename(tablename):
 
 if __name__ == '__main__':
 	init_db()
-	destroy_tables()
+	# destroy_tables()
 	print(engine.table_names())
 

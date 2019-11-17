@@ -14,13 +14,11 @@ class Exercise(Base):
 	__tablename__ = "Exercise"
 	id = Column('id', Integer, primary_key=True)
 	name = Column('name', Unicode)
-	muscle_id = Column('muscle_id', Integer, ForeignKey('Muscle.id'))
-	split_id = Column('split_id', Integer, ForeignKey('Split.id'))
 	sets = Column('sets', Integer)
 	reps = Column('reps', Integer)
 	weight = Column('weight', Integer)
+	muscle_id = Column('muscle_id', Integer, ForeignKey('Muscle.id'))
 
-	split = relationship('Split', foreign_keys=split_id)
 	muscle = relationship('Muscle', foreign_keys=muscle_id)
 
 
@@ -28,6 +26,9 @@ class Muscle(Base):
 	__tablename__ = "Muscle"
 	id = Column('id', Integer, primary_key=True)
 	name = Column('name', Unicode)
+	split_id = Column('split_id', Integer, ForeignKey('Split.id'))
+
+	split = relationship('Split', foreign_keys=split_id)
 
 
 class Split(Base):
@@ -47,10 +48,10 @@ class SplitTimeSeries(Base):
 class ExerciseTimeSeries(Base):
 	__tablename__ = "ExerciseTimeSeries"
 	dt = Column('dt', DateTime, primary_key=True)
-	exercise_id = Column('exercise_id', Integer, ForeignKey('Exercise.id'))
 	weight = Column('weight', Integer)
 	sets = Column('sets', Integer)
 	reps = Column('reps', Integer)
+	exercise_id = Column('exercise_id', Integer, ForeignKey('Exercise.id'))
 
 	exercise = relationship('Exercise', foreign_keys=exercise_id)
 

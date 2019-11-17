@@ -160,5 +160,5 @@ venv.bak/
 
 /src/database/sqlite.db
 /scripts/
-!/scripts/sheets_excercises.py
+!/scripts/sheets_scrape.py
 /scripts/google_key.json
