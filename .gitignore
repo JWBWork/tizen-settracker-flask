@@ -159,6 +159,5 @@ venv.bak/
 .mypy_cache/
 
 /src/database/sqlite.db
-/scripts/
 !/scripts/sheets_scrape.py
 /scripts/google_key.json
