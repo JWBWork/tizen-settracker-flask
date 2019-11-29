@@ -1,5 +1,7 @@
 from sqlalchemy import create_engine
 from sqlalchemy.sql.ddl import DropSchema
+from sqlalchemy.schema import DropTable
+from sqlalchemy.ext.compiler import compiles
 from sqlalchemy.orm import scoped_session, sessionmaker
 from src.database import Base
 from os import path
@@ -33,17 +35,31 @@ def get_session():
 
 
 def init_db():
-	from src.database.models.models import Exercise, Muscle, Split, SplitTimeSeries, ExerciseTimeSeries
 	Base.metadata.create_all(engine)
 
+@compiles(DropTable, "postgresql")
+def _compile_drop_table(element, compiler, **kwargs):
+	return compiler.visit_drop_table(element) + " CASCADE"
 
-def destroy_tables():
+
+def drop_tables():
 	Base.metadata.drop_all(
 		bind=engine
 	)
 
 
-def get_class_by_tablename(tablename):
+def drop_table_by_name(table_name):
+	# engine = sqlalchemy.create_engine('sqlite:///' + dbpath)
+	connection = engine.raw_connection()
+	cursor = connection.cursor()
+	command = "DROP TABLE {};".format(table_name)
+	cursor.execute(command)
+	connection.commit()
+	cursor.close()
+
+
+
+def get_class_by_tablename(table_name):
 	"""Return class reference mapped to table.
 
 	:param tablename: String with name of table.
@@ -51,12 +67,19 @@ def get_class_by_tablename(tablename):
 	"""
 	print(list(Base._decl_class_registry.values()))
 	for c in Base._decl_class_registry.values():
-		if hasattr(c, '__tablename__') and c.__tablename__ == tablename:
+		if hasattr(c, '__tablename__') and c.__tablename__ == table_name:
 			return c
 
 
 if __name__ == '__main__':
 	init_db()
-	# destroy_tables()
-	print(engine.table_names())
+	# drop_tables()
+	# drop_table_by_name('SplitTimeSeries')
+	# print(engine.table_names())
+
+	session = get_session()
+	from src.database import Exercise, Day
+	days = session.query(Day).all()
+	for day in days:
+		session.query
 

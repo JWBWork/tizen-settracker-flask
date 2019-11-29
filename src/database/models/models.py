@@ -7,16 +7,15 @@ from sqlalchemy import Column, Integer, BigInteger, String, ForeignKey, Unicode,
 	Date, Text, Boolean, Float, JSON
 from sqlalchemy.orm import relationship, backref, deferred
 from sqlalchemy.orm import sessionmaker
-from src.database import engine, init_db
 
 
 class Exercise(Base):
 	__tablename__ = "Exercise"
 	id = Column('id', Integer, primary_key=True)
-	name = Column('name', Unicode)
-	sets = Column('sets', Integer)
-	reps = Column('reps', Integer)
-	weight = Column('weight', Integer)
+	name = Column('name', Unicode, unique=True)
+	sets = Column('sets', Integer, default=4)
+	reps = Column('reps', Integer, default=8)
+	weight = Column('weight', Integer, nullable=True)
 	muscle_id = Column('muscle_id', Integer, ForeignKey('Muscle.id'))
 
 	muscle = relationship('Muscle', foreign_keys=muscle_id)
@@ -25,24 +24,25 @@ class Exercise(Base):
 class Muscle(Base):
 	__tablename__ = "Muscle"
 	id = Column('id', Integer, primary_key=True)
-	name = Column('name', Unicode)
-	split_id = Column('split_id', Integer, ForeignKey('Split.id'))
+	name = Column('name', Unicode, unique=True)
+	day_id = Column(Integer, ForeignKey('Day.id'))
 
-	split = relationship('Split', foreign_keys=split_id)
+	day = relationship('Day', back_populates="muscles")
 
 
-class Split(Base):
-	__tablename__ = "Split"
+class Day(Base):
+	__tablename__ = "Day"
 	id = Column('id', Integer, primary_key=True)
-	name = Column('name', Unicode)
+	desc = Column('name', Unicode, unique=True)
+	muscles = relationship('Muscle', back_populates="day")
 
 
-class SplitTimeSeries(Base):
-	__tablename__ = "SplitTimeSeries"
+class DayTimeSeries(Base):
+	__tablename__ = "DayTimeSeries"
 	dt = Column('dt', DateTime, primary_key=True)
-	split_id = Column('split_id', Integer, ForeignKey('Split.id'))
+	day_id = Column(Integer, ForeignKey('Day.id'))
 
-	split = relationship('Split', foreign_keys=split_id)
+	day = relationship('Day', foreign_keys=day_id)
 
 
 class ExerciseTimeSeries(Base):
@@ -51,7 +51,8 @@ class ExerciseTimeSeries(Base):
 	weight = Column('weight', Integer)
 	sets = Column('sets', Integer)
 	reps = Column('reps', Integer)
-	exercise_id = Column('exercise_id', Integer, ForeignKey('Exercise.id'))
+	exercise_id = Column(Integer, ForeignKey('Exercise.id'))
 
 	exercise = relationship('Exercise', foreign_keys=exercise_id)
+
 
