@@ -38,8 +38,7 @@ class BodyBuidlingSpider(scrapy.Spider):
 		# capabilities["marionette"] = False
 		options = webdriver.FirefoxOptions()
 		options.headless = True
-		# options.binary = r"C:\Users\jacob\AppData\Local\Mozilla Firefox\firefox.exe"
-		options.binary = r"C:\Program Files\Mozilla Firefox\firefox.exe"
+		options.binary = r"C:\Users\jacob\AppData\Local\Mozilla Firefox\firefox.exe"
 		self.driver = webdriver.Firefox(
 			executable_path=executable_path,
 			# capabilities=capabilities,
@@ -82,6 +81,7 @@ class BodyBuidlingSpider(scrapy.Spider):
 					ex_data.append({
 						"name": ex_name,
 						"muscle": ex_muscle,
+						"url": ex_url
 					})
 				ex_names.add(ex_name)
 
@@ -155,6 +155,7 @@ def load_pickled_data():
 	for ex in exercises:
 		muscle = ex["muscle"]
 		ex_name = ex["name"]
+		ex_url = ex["url"]
 		db_day = next((day for muscles, day in day_muscle_map if muscle in muscles))
 		if muscle not in db_muscles.keys():
 			db_muscle = Muscle(
@@ -167,7 +168,8 @@ def load_pickled_data():
 			db_muscle = db_muscles[muscle]
 		db_exercise = Exercise(
 			name=ex_name,
-			muscle=db_muscle
+			muscle=db_muscle,
+			url=ex_url
 		)
 		db_session.add(db_exercise)
 	db_session.commit()

@@ -16,6 +16,7 @@ class Exercise(Base):
 	sets = Column('sets', Integer, default=4)
 	reps = Column('reps', Integer, default=8)
 	weight = Column('weight', Integer, nullable=True)
+	url = Column('url', String, nullable=False)
 	muscle_id = Column('muscle_id', Integer, ForeignKey('Muscle.id'))
 
 	muscle = relationship('Muscle', foreign_keys=muscle_id)

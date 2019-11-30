@@ -13,7 +13,6 @@ class Routine(Resource):
 		days = db_session.query(DayDB).all()
 		routine = []
 		for i, day in enumerate(days):
-			# print(day.desc)
 			routine.append({
 				"id": day.id,
 				"desc": day.desc,
@@ -23,32 +22,26 @@ class Routine(Resource):
 				MuscleDB.day_id == day.id
 			).all()
 			for muscle in muscles:
-				# print(f"\t{muscle.name}")
-				# routine[i][muscle.name] = []
-				# routine[i]["muscles"] = []
 				excercises = db_session.query(ExerciseDB).filter(
 					ExerciseDB.muscle_id == muscle.id
 				).all()
 				excercises_list = []
 				for excercise in excercises:
-					# print(f"\t\t{excercise.name}")
-					# routine[i][muscle.name].append({
-					# 	"name": excercise.name,
-					# 	"sets": excercise.sets,
-					# 	"reps": excercise.reps,
-					# 	"weight": excercise.weight,
-					# 	"muscle": muscle.name
-					# })
 					excercises_list.append({
+						"id": excercise.id,
 						"name": excercise.name,
 						"sets": excercise.sets,
 						"reps": excercise.reps,
-						"weight": excercise.weight
+						"weight": excercise.weight,
+						"url": excercise.url,
+						"muscleId": excercise.muscle_id
 					})
 				routine[i]["muscles"].append({
+					"id": muscle.id,
 					"name": muscle.name,
 					"excercises": excercises_list
 				})
+		db_session.close()
 		return routine
 
 

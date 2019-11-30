@@ -22,20 +22,19 @@ engine = create_engine(db_string)
 public access and security groups that allow outside connections
 """
 
-db_session = sessionmaker(
-	autocommit=False,
-	autoflush=False,
-	bind=engine
-)
-# scoped_session = scoped_session(db_session)
-
 
 def get_session():
-	return db_session()
+	session = sessionmaker(
+		autocommit=False,
+		autoflush=False,
+		bind=engine
+	)()
+	return session
 
 
 def init_db():
 	Base.metadata.create_all(engine)
+
 
 @compiles(DropTable, "postgresql")
 def _compile_drop_table(element, compiler, **kwargs):
@@ -58,28 +57,20 @@ def drop_table_by_name(table_name):
 	cursor.close()
 
 
-
 def get_class_by_tablename(table_name):
 	"""Return class reference mapped to table.
 
 	:param tablename: String with name of table.
 	:return: Class reference or None.
 	"""
-	print(list(Base._decl_class_registry.values()))
+	# print(list(Base._decl_class_registry.values()))
 	for c in Base._decl_class_registry.values():
 		if hasattr(c, '__tablename__') and c.__tablename__ == table_name:
 			return c
 
 
 if __name__ == '__main__':
-	init_db()
-	# drop_tables()
-	# drop_table_by_name('SplitTimeSeries')
-	# print(engine.table_names())
-
 	session = get_session()
-	from src.database import Exercise, Day
-	days = session.query(Day).all()
-	for day in days:
-		session.query
+	session.close()
+
 
